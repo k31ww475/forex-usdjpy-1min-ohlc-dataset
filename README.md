@@ -1,10 +1,36 @@
-# USD/JPY 1-Minute OHLC Database (2001-2025)
-
-High-quality USD/JPY forex rate 1-minute OHLC database (approx. 25 years, 8.5+ million records)
-
-## Overview
+# High-quality USD/JPY forex rate 1-minute OHLC database (approx. 25 years, 8.5+ million records)
 
 This database contains 1-minute candlestick data for USD/JPY forex rates spanning approximately 25 years from January 2001 to November 2025. Optimized for machine learning, statistical analysis, algorithmic trading research, and various other applications.
+
+## Download
+
+### Get the Database File
+
+The database file `USDJPY.db` (1.05 GB) is available via GitHub Releases:
+
+1. Go to [Releases](https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases)
+2. Download `USDJPY.db` from the latest release
+3. Place the file in your working directory
+
+**Alternative: Using Git LFS**
+
+If using Git LFS for large file management:
+
+```bash
+git lfs install
+git clone https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset.git
+cd forex-usdjpy-1min-ohlc-dataset
+```
+
+**Using wget or curl**
+
+```bash
+# Replace with actual release URL
+wget https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases/download/v1.0/USDJPY.db
+
+# Or using curl
+curl -L -O https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases/download/v1.0/USDJPY.db
+```
 
 ## Database Specifications
 
@@ -19,9 +45,7 @@ This database contains 1-minute candlestick data for USD/JPY forex rates spannin
 | Currency Pair | JPY=X (USD/JPY) |
 | Timeframe | 1-minute |
 
-## Table Structure
-
-### `tb1m` Table
+## Schema
 
 | Column | Data Type | Description | Constraints |
 |--------|-----------|-------------|-------------|
@@ -37,7 +61,9 @@ This database contains 1-minute candlestick data for USD/JPY forex rates spannin
 - `idx_datetime`: Single-column index on datetime (for fast searches)
 - `sqlite_autoindex_tb1m_1`: Composite PRIMARY KEY on (symbol, datetime)
 
-## Price Statistics
+## Data Statistics
+
+### Overall Statistics
 
 | Metric | Open | High | Low | Close |
 |--------|------|------|-----|-------|
@@ -46,7 +72,7 @@ This database contains 1-minute candlestick data for USD/JPY forex rates spannin
 | Average | 112.30 | 112.31 | 112.29 | 112.30 |
 | Range | 86.34 | 86.34 | 86.38 | 86.34 |
 
-## Annual Data Distribution
+### Yearly Breakdown
 
 | Year | Records | Close Range | Avg Price |
 |------|---------|-------------|-----------|
@@ -78,7 +104,8 @@ This database contains 1-minute candlestick data for USD/JPY forex rates spannin
 
 ## Usage Examples
 
-### Python + pandas
+### Python
+
 ```python
 import sqlite3
 import pandas as pd
@@ -88,9 +115,9 @@ conn = sqlite3.connect('USDJPY.db')
 
 # Fetch data for specific period
 query = """
-    SELECT * FROM tb1m 
-    WHERE datetime BETWEEN '2024-01-01' AND '2024-12-31'
-    ORDER BY datetime
+SELECT * FROM tb1m
+WHERE datetime BETWEEN '2024-01-01' AND '2024-12-31'
+ORDER BY datetime
 """
 df = pd.read_sql_query(query, conn)
 
@@ -105,19 +132,22 @@ daily = df.groupby(df['datetime'].str[:10]).agg({
 conn.close()
 ```
 
-### SQLite Command Line
+### SQLite CLI
+
 ```bash
 sqlite3 USDJPY.db
+```
 
+```sql
 # Get data for specific date
-SELECT * FROM tb1m 
-WHERE date(datetime) = '2024-06-15' 
+SELECT * FROM tb1m
+WHERE date(datetime) = '2024-06-15'
 LIMIT 10;
 
 # Calculate moving average
 SELECT datetime, close,
        AVG(close) OVER (
-           ORDER BY datetime 
+           ORDER BY datetime
            ROWS BETWEEN 19 PRECEDING AND CURRENT ROW
        ) as sma_20
 FROM tb1m
@@ -126,6 +156,7 @@ LIMIT 100;
 ```
 
 ### R
+
 ```r
 library(RSQLite)
 library(DBI)
@@ -140,41 +171,45 @@ df <- dbGetQuery(con, query)
 dbDisconnect(con)
 ```
 
-## Recommended Query Examples
+## Common Queries
 
-### 1. Date Range Search
+### Date Range Query
+
 ```sql
-SELECT * FROM tb1m 
+SELECT * FROM tb1m
 WHERE datetime BETWEEN '2024-01-01' AND '2024-12-31'
 LIMIT 1000;
 ```
 
-### 2. Specific Date Query
+### Single Day Query
+
 ```sql
-SELECT * FROM tb1m 
+SELECT * FROM tb1m
 WHERE date(datetime) = '2024-06-15';
 ```
 
-### 3. Daily OHLC Aggregation
+### Daily OHLC Aggregation
+
 ```sql
-SELECT 
+SELECT
     date(datetime) as date,
-    (SELECT open FROM tb1m t2 
-     WHERE date(t2.datetime) = date(t1.datetime) 
+    (SELECT open FROM tb1m t2
+     WHERE date(t2.datetime) = date(t1.datetime)
      ORDER BY datetime LIMIT 1) as day_open,
     MAX(high) as day_high,
     MIN(low) as day_low,
-    (SELECT close FROM tb1m t2 
-     WHERE date(t2.datetime) = date(t1.datetime) 
+    (SELECT close FROM tb1m t2
+     WHERE date(t2.datetime) = date(t1.datetime)
      ORDER BY datetime DESC LIMIT 1) as day_close
 FROM tb1m t1
 GROUP BY date(datetime)
 ORDER BY date;
 ```
 
-### 4. Volatility Analysis
+### Volatility Analysis
+
 ```sql
-SELECT 
+SELECT
     date(datetime) as date,
     AVG((high - low) / close * 100) as avg_volatility_pct,
     MAX((high - low) / close * 100) as max_volatility_pct
@@ -188,7 +223,7 @@ ORDER BY date;
 Optimized indexes enable fast queries even on large datasets.
 
 | Query Type | Execution Time | Notes |
-|-----------|----------------|-------|
+|------------|----------------|-------|
 | Date range search | ~2ms | Using idx_datetime |
 | Specific date | <1ms | Using idx_datetime |
 | Full count | ~250ms | Using covering index |
@@ -202,15 +237,15 @@ Designed to handle 1000+ concurrent accesses.
 - SQLite: 3.x or higher
 - Python: 3.7 or higher (when using pandas)
 
-## Usage Notes
+## Best Practices
 
-1. Read-only usage is recommended
-2. Use `LIMIT` clause when handling large amounts of data
-3. The `datetime` column is indexed for fast date searches
-4. For time-series data, utilize `ORDER BY datetime`
-5. Use `pd.read_sql_query()` when loading with Pandas
+- Read-only usage is recommended
+- Use `LIMIT` clause when handling large amounts of data
+- The `datetime` column is indexed for fast date searches
+- For time-series data, utilize `ORDER BY datetime`
+- Use `pd.read_sql_query()` when loading with Pandas
 
-## Research Applications
+## Use Cases
 
 - Machine learning model training and validation
 - Statistical arbitrage strategy development
@@ -221,10 +256,8 @@ Designed to handle 1000+ concurrent accesses.
 
 ## License
 
-### Non-Commercial Use (Free)
 Free for personal learning, research, and educational purposes.
 
-### Commercial Use (Paid)
 Separate license agreement required for commercial use.
 
 See [LICENSE](LICENSE) file for details.
@@ -233,7 +266,7 @@ See [LICENSE](LICENSE) file for details.
 
 This dataset is independently collected, processed, and optimized based on publicly available market data.
 
-## Update History
+## Changelog
 
 - 2025-11-17: Initial release
 
@@ -241,18 +274,45 @@ This dataset is independently collected, processed, and optimized based on publi
 
 Issues and Pull Requests are welcome.
 
-## Support
+For questions or issues, please use [GitHub Issues](https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/issues).
 
-For questions or issues, please use GitHub Issues.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
 
+---
 
-# USD/JPY 1-Minute OHLC Database (2001-2025)
-
-高品質なUSD/JPY為替レートの1分足OHLCデータベース（約25年分、850万件超）
-
-## 概要
+# 高品質なUSD/JPY為替レートの1分足OHLCデータベース（約25年分、850万件超）
 
 このデータベースは、2001年1月から2025年11月までの約25年間にわたるUSD/JPY為替レートの1分足データを格納したSQLiteデータベースです。機械学習、統計分析、アルゴリズムトレーディング研究など、幅広い用途に最適化されています。
+
+## ダウンロード
+
+### データベースファイルの取得
+
+データベースファイル `USDJPY.db` (1.05 GB) はGitHub Releasesから入手可能です：
+
+1. [Releases](https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases)ページにアクセス
+2. 最新リリースから`USDJPY.db`をダウンロード
+3. 作業ディレクトリに配置
+
+**代替方法: Git LFSを使用**
+
+Git LFSで大容量ファイルを管理する場合：
+
+```bash
+git lfs install
+git clone https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset.git
+cd forex-usdjpy-1min-ohlc-dataset
+```
+
+**wgetまたはcurlを使用**
+
+```bash
+# 実際のリリースURLに置き換えてください
+wget https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases/download/v1.0/USDJPY.db
+
+# またはcurlを使用
+curl -L -O https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases/download/v1.0/USDJPY.db
+```
 
 ## データベース仕様
 
@@ -267,12 +327,10 @@ For questions or issues, please use GitHub Issues.
 | 通貨ペア | JPY=X (USD/JPY) |
 | 時間軸 | 1分足 |
 
-## テーブル構造
-
-### `tb1m` テーブル
+## スキーマ
 
 | カラム名 | データ型 | 説明 | 制約 |
-|---------|---------|------|------|
+|----------|----------|------|------|
 | symbol | TEXT | 通貨ペア識別子 | PRIMARY KEY, NOT NULL |
 | datetime | TEXT | 日時（YYYY-MM-DD HH:MM:SS） | PRIMARY KEY, NOT NULL |
 | open | REAL | 始値 | - |
@@ -285,7 +343,9 @@ For questions or issues, please use GitHub Issues.
 - `idx_datetime`: datetime列に対する単独インデックス（高速検索用）
 - `sqlite_autoindex_tb1m_1`: (symbol, datetime)複合PRIMARY KEY
 
-## 価格統計
+## データ統計
+
+### 全体統計
 
 | 指標 | Open | High | Low | Close |
 |------|------|------|-----|-------|
@@ -294,10 +354,10 @@ For questions or issues, please use GitHub Issues.
 | 平均値 | 112.30 | 112.31 | 112.29 | 112.30 |
 | レンジ | 86.34 | 86.34 | 86.38 | 86.34 |
 
-## 年別データ分布
+### 年別内訳
 
 | 年 | レコード数 | Close範囲 | 平均価格 |
-|----|-----------|-----------|---------|
+|----|------------|-----------|----------|
 | 2001 | 244,200 | 113.60～132.45 | 121.35 |
 | 2002 | 238,609 | 115.54～135.01 | 124.49 |
 | 2003 | 330,526 | 106.80～121.89 | 115.82 |
@@ -324,9 +384,9 @@ For questions or issues, please use GitHub Issues.
 | 2024 | 372,023 | 139.59～161.95 | 151.46 |
 | 2025 | 325,289 | 139.90～158.84 | 148.69 |
 
-## 使用方法
+## 使用例
 
-### Python + pandas
+### Python
 
 ```python
 import sqlite3
@@ -337,9 +397,9 @@ conn = sqlite3.connect('USDJPY.db')
 
 # 特定期間のデータ取得
 query = """
-    SELECT * FROM tb1m 
-    WHERE datetime BETWEEN '2024-01-01' AND '2024-12-31'
-    ORDER BY datetime
+SELECT * FROM tb1m
+WHERE datetime BETWEEN '2024-01-01' AND '2024-12-31'
+ORDER BY datetime
 """
 df = pd.read_sql_query(query, conn)
 
@@ -354,20 +414,22 @@ daily = df.groupby(df['datetime'].str[:10]).agg({
 conn.close()
 ```
 
-### SQLiteコマンドライン
+### SQLite CLI
 
 ```bash
 sqlite3 USDJPY.db
+```
 
+```sql
 # 特定日のデータ取得
-SELECT * FROM tb1m 
-WHERE date(datetime) = '2024-06-15' 
+SELECT * FROM tb1m
+WHERE date(datetime) = '2024-06-15'
 LIMIT 10;
 
 # 移動平均の計算
 SELECT datetime, close,
        AVG(close) OVER (
-           ORDER BY datetime 
+           ORDER BY datetime
            ROWS BETWEEN 19 PRECEDING AND CURRENT ROW
        ) as sma_20
 FROM tb1m
@@ -391,45 +453,45 @@ df <- dbGetQuery(con, query)
 dbDisconnect(con)
 ```
 
-## 推奨クエリ例
+## 一般的なクエリ
 
-### 1. 特定期間の範囲検索
+### 日時範囲クエリ
 
 ```sql
-SELECT * FROM tb1m 
+SELECT * FROM tb1m
 WHERE datetime BETWEEN '2024-01-01' AND '2024-12-31'
 LIMIT 1000;
 ```
 
-### 2. 特定日のデータ取得
+### 特定日クエリ
 
 ```sql
-SELECT * FROM tb1m 
+SELECT * FROM tb1m
 WHERE date(datetime) = '2024-06-15';
 ```
 
-### 3. 日次OHLC集計
+### 日次OHLC集計
 
 ```sql
-SELECT 
+SELECT
     date(datetime) as date,
-    (SELECT open FROM tb1m t2 
-     WHERE date(t2.datetime) = date(t1.datetime) 
+    (SELECT open FROM tb1m t2
+     WHERE date(t2.datetime) = date(t1.datetime)
      ORDER BY datetime LIMIT 1) as day_open,
     MAX(high) as day_high,
     MIN(low) as day_low,
-    (SELECT close FROM tb1m t2 
-     WHERE date(t2.datetime) = date(t1.datetime) 
+    (SELECT close FROM tb1m t2
+     WHERE date(t2.datetime) = date(t1.datetime)
      ORDER BY datetime DESC LIMIT 1) as day_close
 FROM tb1m t1
 GROUP BY date(datetime)
 ORDER BY date;
 ```
 
-### 4. ボラティリティ分析
+### ボラティリティ分析
 
 ```sql
-SELECT 
+SELECT
     date(datetime) as date,
     AVG((high - low) / close * 100) as avg_volatility_pct,
     MAX((high - low) / close * 100) as max_volatility_pct
@@ -443,7 +505,7 @@ ORDER BY date;
 インデックス最適化により、大規模データセットでも高速なクエリを実現しています。
 
 | クエリタイプ | 実行時間 | 備考 |
-|------------|---------|------|
+|--------------|----------|------|
 | 日時範囲検索 | ~2ms | idx_datetime使用 |
 | 特定日検索 | <1ms | idx_datetime使用 |
 | 全件カウント | ~250ms | カバリングインデックス使用 |
@@ -457,15 +519,15 @@ ORDER BY date;
 - SQLite: 3.x以上
 - Python: 3.7以上（pandas使用時）
 
-## 使用上の注意
+## ベストプラクティス
 
-1. データベースは読み取り専用での使用を推奨します
-2. 大量データを扱う際は`LIMIT`句を使用してください
-3. `datetime`列にインデックスが設定されているため、日時検索は高速です
-4. 時系列データのため、`ORDER BY datetime`を活用してください
-5. Pandasで読み込む場合は`pd.read_sql_query()`を使用してください
+- データベースは読み取り専用での使用を推奨します
+- 大量データを扱う際は`LIMIT`句を使用してください
+- `datetime`列にインデックスが設定されているため、日時検索は高速です
+- 時系列データのため、`ORDER BY datetime`を活用してください
+- Pandasで読み込む場合は`pd.read_sql_query()`を使用してください
 
-## 研究利用例
+## 利用用途
 
 - 機械学習モデルの学習・検証
 - 統計的アービトラージ戦略の開発
@@ -476,11 +538,9 @@ ORDER BY date;
 
 ## ライセンス
 
-### 非営利利用（無料）
 個人学習・研究・教育目的での利用は無料です。
 
-### 商用利用（有償）
-商用利用をご希望の場合は別途ライセンス契約が必要です。  
+商用利用をご希望の場合は別途ライセンス契約が必要です。
 
 詳細は[LICENSE](LICENSE)ファイルをご確認ください。
 
@@ -488,14 +548,14 @@ ORDER BY date;
 
 本データセットは公開されている市場データを基に、独自に収集・処理・最適化を行ったものです。
 
-## 更新履歴
+## 変更履歴
 
 - 2025-11-17: 初回リリース
 
-## 貢献
+## コントリビューション
 
 Issues、Pull Requestsを歓迎します。
 
-## サポート
+質問や問題がある場合は、[GitHub Issues](https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/issues)をご利用ください。
 
-質問や問題がある場合は、GitHubのIssuesをご利用ください。
+詳細なコントリビューションガイドラインについては[CONTRIBUTING.md](CONTRIBUTING.md)をご覧ください。
