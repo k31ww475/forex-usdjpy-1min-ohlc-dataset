@@ -1,4 +1,4 @@
-# High-quality USD/JPY forex rate 1-minute OHLC database (approx. 25 years, 8.5+ million records)
+#USD/JPY forex rate 1-minute OHLC database (approx. 25 years, 8.5+ million records)
 
 This database contains 1-minute candlestick data for USD/JPY forex rates spanning approximately 25 years from January 2001 to November 2025. Optimized for machine learning, statistical analysis, algorithmic trading research, and various other applications.
 
