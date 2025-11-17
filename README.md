@@ -278,6 +278,38 @@ For questions or issues, please use [GitHub Issues](https://github.com/k31ww475/
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
 
+
+## Download
+
+### Get the Database File
+
+The database file `USDJPY.db` (1.05 GB) is available via GitHub Releases:
+
+1. Go to [Releases](https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases)
+2. Download `USDJPY.db` from the latest release
+3. Place the file in your working directory
+
+**Alternative: Using Git LFS**
+
+If using Git LFS for large file management:
+
+```bash
+git lfs install
+git clone https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset.git
+cd forex-usdjpy-1min-ohlc-dataset
+```
+
+**Using wget or curl**
+
+```bash
+# Replace with actual release URL
+wget https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases/download/v1.0/USDJPY.db
+
+# Or using curl
+curl -L -O https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases/download/v1.0/USDJPY.db
+```
+
+
 ---
 
 # 高品質なUSD/JPY為替レートの1分足OHLCデータベース（約25年分、850万件超）
@@ -555,6 +587,38 @@ ORDER BY date;
 ## コントリビューション
 
 Issues、Pull Requestsを歓迎します。
+
+## ダウンロード
+
+### データベースファイルの取得
+
+データベースファイル `USDJPY.db` (1.05 GB) はGitHub Releasesから入手可能です：
+
+1. [Releases](https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases)ページにアクセス
+2. 最新リリースから`USDJPY.db`をダウンロード
+3. 作業ディレクトリに配置
+
+**代替方法: Git LFSを使用**
+
+Git LFSで大容量ファイルを管理する場合：
+
+```bash
+git lfs install
+git clone https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset.git
+cd forex-usdjpy-1min-ohlc-dataset
+```
+
+**wgetまたはcurlを使用**
+
+```bash
+# 実際のリリースURLに置き換えてください
+wget https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases/download/v1.0/USDJPY.db
+
+# またはcurlを使用
+curl -L -O https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases/download/v1.0/USDJPY.db
+```
+
+
 
 質問や問題がある場合は、[GitHub Issues](https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/issues)をご利用ください。
 
