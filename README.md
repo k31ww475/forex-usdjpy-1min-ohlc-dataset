@@ -312,7 +312,7 @@ curl -L -O https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases/d
 
 ---
 
-# 高品質なUSD/JPY為替レートの1分足OHLCデータベース（約25年分、850万件超）
+# USD/JPY為替レートの1分足OHLCデータベース（約25年分、850万件超）
 
 このデータベースは、2001年1月から2025年11月までの約25年間にわたるUSD/JPY為替レートの1分足データを格納したSQLiteデータベースです。機械学習、統計分析、アルゴリズムトレーディング研究など、幅広い用途に最適化されています。
 
@@ -325,16 +325,6 @@ curl -L -O https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases/d
 1. [Releases](https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases)ページにアクセス
 2. 最新リリースから`USDJPY.db`をダウンロード
 3. 作業ディレクトリに配置
-
-**代替方法: Git LFSを使用**
-
-Git LFSで大容量ファイルを管理する場合：
-
-```bash
-git lfs install
-git clone https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset.git
-cd forex-usdjpy-1min-ohlc-dataset
-```
 
 **wgetまたはcurlを使用**
 
@@ -542,8 +532,6 @@ ORDER BY date;
 | 特定日検索 | <1ms | idx_datetime使用 |
 | 全件カウント | ~250ms | カバリングインデックス使用 |
 
-1000人の同時アクセスにも対応可能な設計です。
-
 ## システム要件
 
 - 最小ディスク容量: 1.6 GB（作業用領域含む）
@@ -578,7 +566,7 @@ ORDER BY date;
 
 ## データソース
 
-本データセットは公開されている市場データを基に、独自に収集・処理・最適化を行ったものです。
+本データセットは市場データを基に独自に収集・処理・最適化を行ったものです。
 
 ## 変更履歴
 
@@ -597,16 +585,6 @@ Issues、Pull Requestsを歓迎します。
 1. [Releases](https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset/releases)ページにアクセス
 2. 最新リリースから`USDJPY.db`をダウンロード
 3. 作業ディレクトリに配置
-
-**代替方法: Git LFSを使用**
-
-Git LFSで大容量ファイルを管理する場合：
-
-```bash
-git lfs install
-git clone https://github.com/k31ww475/forex-usdjpy-1min-ohlc-dataset.git
-cd forex-usdjpy-1min-ohlc-dataset
-```
 
 **wgetまたはcurlを使用**
 
